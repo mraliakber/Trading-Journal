@@ -886,6 +886,33 @@
       font-style: italic;
     }
 
+    .sb-ss-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .sb-ss-item {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border2);
+      aspect-ratio: 16/10;
+    }
+
+    .sb-ss-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      cursor: zoom-in;
+      transition: transform .15s;
+    }
+
+    .sb-ss-item img:hover {
+      transform: scale(1.03);
+    }
+
     .sb-actions {
       display: flex;
       gap: 8px;
@@ -919,7 +946,7 @@
       background: var(--bg2);
       border: 1px solid var(--border2);
       border-radius: var(--r-lg);
-      width: 600px;
+      width: 620px;
       max-width: 95vw;
       max-height: 90vh;
       overflow-y: auto;
@@ -1132,14 +1159,100 @@
       margin-top: 3px;
     }
 
-    .upload-preview-img {
-      width: 100%;
-      max-height: 180px;
-      border-radius: 8px;
-      object-fit: contain;
-      border: 1px solid var(--border2);
-      display: none;
+    .ss-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 8px;
       margin-top: 10px;
+    }
+
+    .ss-thumb-wrap {
+      position: relative;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 1px solid var(--border2);
+      aspect-ratio: 16/10;
+      background: var(--bg4);
+    }
+
+    .ss-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      cursor: zoom-in;
+      transition: transform .15s;
+    }
+
+    .ss-thumb-wrap img:hover {
+      transform: scale(1.04);
+    }
+
+    .ss-remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(240, 92, 110, 0.85);
+      border: none;
+      color: #fff;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    /* deposit/withdraw modal */
+    .dw-modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--r-lg);
+      width: 380px;
+      max-width: 95vw;
+      box-shadow: var(--shadow);
+      transform: translateY(14px) scale(.97);
+      transition: transform .22s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .overlay.active .dw-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .dw-type-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .dw-type-btn {
+      flex: 1;
+      padding: 9px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border2);
+      background: var(--bg3);
+      color: var(--text2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center;
+    }
+
+    .dw-type-btn.active-dep {
+      background: var(--green-dim);
+      border-color: var(--green-b);
+      color: var(--green);
+    }
+
+    .dw-type-btn.active-with {
+      background: var(--red-dim);
+      border-color: var(--red-b);
+      color: var(--red);
     }
 
     .modal-footer {
@@ -1206,46 +1319,6 @@
         box-shadow: 0 0 0 4px transparent;
       }
     }
-
-    /* balance edit inline */
-    .bal-edit {
-      font-size: 10px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text3);
-      border-radius: 4px;
-      padding: 2px 7px;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      margin-left: 7px;
-      vertical-align: middle;
-      transition: all .15s;
-    }
-
-    .bal-edit:hover {
-      border-color: var(--gold-b);
-      color: var(--gold);
-    }
-
-    /* row number */
-    .row-num {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--text3);
-    }
-
-    /* balance cell color */
-    .bal-pos {
-      color: var(--green);
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-    }
-
-    .bal-neg {
-      color: var(--red);
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-    }
   </style>
 </head>
 
@@ -1259,7 +1332,6 @@
     </div>
 
     <div class="hdr-center">
-      <!-- Date Range Filter -->
       <div class="date-pill">
         <label>From</label>
         <input type="date" id="date-from" onchange="filterTrades()" title="Start date">
@@ -1272,6 +1344,9 @@
     <div class="hdr-right">
       <span style="font-size:11.5px;color:var(--text3);"><span class="live-dot"></span>Live</span>
       <button class="btn btn-ghost" onclick="resetData()" style="font-size:12px;padding:7px 14px;">Reset</button>
+      <button class="btn btn-ghost" onclick="openDWModal()"
+        style="font-size:12px;padding:7px 14px;border-color:var(--green-b);color:var(--green);">💰 Deposit /
+        Withdraw</button>
       <button class="btn btn-gold" onclick="openModal()">+ New Trade</button>
     </div>
   </header>
@@ -1398,8 +1473,8 @@
         </div>
       </div>
 
-    </div><!-- /main -->
-  </div><!-- /app-body -->
+    </div>
+  </div>
 
   <!-- ═══ TRADE DETAIL SIDEBAR ═══ -->
   <div class="sidebar" id="sidebar">
@@ -1420,16 +1495,13 @@
       </div>
       <div class="modal-body">
         <div class="fg">
-
           <div class="fgrp">
             <label class="flabel">Pair / Symbol</label>
             <input class="finput" type="text" id="f-pair" value="XAUUSD" list="pair-dl" placeholder="e.g. XAUUSD">
             <datalist id="pair-dl">
               <option value="XAUUSD">
               <option value="XAUEUR">
-              <option value="XAU/USD">
-              <option value="Gold">
-              <option value="GOLD">
+              <option value="EURUSD">
             </datalist>
           </div>
 
@@ -1452,20 +1524,10 @@
           </div>
 
           <div class="fgrp">
-            <label class="flabel">Entry Price</label>
-            <input class="finput" type="number" id="f-entry" placeholder="e.g. 2345.50" step="any">
-          </div>
-
-          <div class="fgrp">
-            <label class="flabel">Exit Price</label>
-            <input class="finput" type="number" id="f-exit" placeholder="e.g. 2367.80" step="any">
-          </div>
-
-          <div class="fgrp">
             <label class="flabel">Lot Size</label>
             <div class="lot-wrap">
               <button class="lot-btn" type="button" onclick="changeLot(-0.01)">−</button>
-              <input type="number" id="f-lot" value="0.01" step="0.01" min="0.01" placeholder="0.01">
+              <input type="number" id="f-lot" value="0.01" step="0.01" min="0.01">
               <button class="lot-btn" type="button" onclick="changeLot(+0.01)">+</button>
             </div>
           </div>
@@ -1478,27 +1540,61 @@
           <div class="fgrp full">
             <label class="flabel">Notes / Analysis</label>
             <textarea class="finput" id="f-note"
-              placeholder="Entry reason, setup type, market conditions, lessons learned..."></textarea>
+              placeholder="Entry reason, setup type, market conditions..."></textarea>
           </div>
 
           <div class="fgrp full">
-            <label class="flabel">Chart Screenshot</label>
-            <label class="upload-box">
-              <input type="file" id="f-screenshot" accept="image/*" onchange="handleScreenshot(event)">
+            <label class="flabel">Chart Screenshots (up to 5)</label>
+            <label class="upload-box" id="ss-upload-box">
+              <input type="file" id="f-screenshot" accept="image/*" multiple onchange="handleScreenshots(event)">
               <div id="upload-ph">
                 <div class="upload-icon">📸</div>
-                <div class="upload-hint">Click to upload chart screenshot</div>
-                <div class="upload-hint2">PNG · JPG · GIF · up to 10 MB</div>
+                <div class="upload-hint">Click or drag &amp; drop screenshots</div>
+                <div class="upload-hint2">PNG · JPG · up to 5 images (or paste from clipboard)</div>
               </div>
-              <img id="upload-prev" class="upload-preview-img">
             </label>
+            <div class="ss-grid" id="ss-preview-grid"></div>
           </div>
-
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
         <button class="btn btn-gold" onclick="saveTrade()">Save Trade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPOSIT / WITHDRAW MODAL -->
+  <div class="overlay" id="dw-overlay" onclick="if(event.target===this)closeDWModal()">
+    <div class="dw-modal">
+      <div class="modal-hdr">
+        <span class="modal-title">Deposit / Withdraw</span>
+        <button class="modal-close" onclick="closeDWModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding:24px 22px;">
+        <div class="dw-type-row">
+          <button id="dw-dep-btn" class="dw-type-btn active-dep" onclick="setDWType('deposit')">Deposit</button>
+          <button id="dw-with-btn" class="dw-type-btn" onclick="setDWType('withdraw')">Withdraw</button>
+        </div>
+
+        <div class="fgrp">
+          <label class="flabel">Amount ($)</label>
+          <input class="finput" type="number" id="dw-amount" placeholder="100.00" step="any" value="100">
+        </div>
+
+        <div class="fgrp">
+          <label class="flabel">Date</label>
+          <input class="finput" type="date" id="dw-date">
+        </div>
+
+        <div class="fgrp full">
+          <label class="flabel">Note (optional)</label>
+          <textarea class="finput" id="dw-note" rows="2" placeholder="Funding / Withdrawal reason..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeDWModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="saveDW()">Save</button>
       </div>
     </div>
   </div>
@@ -1509,36 +1605,35 @@
   </div>
 
   <script>
-    // ═══════════════════════════════════════════
     // DATA
-    // ═══════════════════════════════════════════
     let trades = JSON.parse(localStorage.getItem('myfx_trades') || '[]');
+    let capitalEvents = JSON.parse(localStorage.getItem('myfx_capital') || '[]'); // deposit/withdraw
     let startBal = parseFloat(localStorage.getItem('myfx_start') || '100');
     let editingId = null;
     let activeSidebarId = null;
-    let tempScreenshot = null;
+    let currentScreenshots = []; // array of base64
 
-    // ═══════════════════════════════════════════
     // INIT
-    // ═══════════════════════════════════════════
     window.addEventListener('load', () => {
       const now = new Date();
       document.getElementById('f-date').value = now.toISOString().split('T')[0];
       document.getElementById('f-time').value = now.toTimeString().slice(0, 5);
+      document.getElementById('dw-date').value = now.toISOString().split('T')[0];
       render();
     });
     window.addEventListener('resize', drawChart);
 
-    // ═══════════════════════════════════════════
     // PERSIST
-    // ═══════════════════════════════════════════
     function save() {
       localStorage.setItem('myfx_trades', JSON.stringify(trades));
+      localStorage.setItem('myfx_capital', JSON.stringify(capitalEvents));
       localStorage.setItem('myfx_start', startBal);
     }
+
     function resetData() {
-      if (!confirm('Reset all trades and data?')) return;
-      trades = []; startBal = 100; save(); closeSidebar(); render();
+      if (!confirm('Reset all data?')) return;
+      trades = []; capitalEvents = []; startBal = 100;
+      save(); closeSidebar(); render();
     }
     function editBalance() {
       const v = prompt('Enter starting balance ($):', startBal.toFixed(2));
@@ -1548,9 +1643,7 @@
       startBal = n; save(); render();
     }
 
-    // ═══════════════════════════════════════════
-    // LOT SPINNER
-    // ═══════════════════════════════════════════
+    // LOT
     function changeLot(delta) {
       const inp = document.getElementById('f-lot');
       let v = parseFloat(inp.value) || 0.01;
@@ -1558,80 +1651,113 @@
       inp.value = v.toFixed(2);
     }
 
-    // ═══════════════════════════════════════════
     // MODAL
-    // ═══════════════════════════════════════════
     function openModal(id = null) {
       editingId = id;
-      tempScreenshot = null;
+      currentScreenshots = [];
       const d = new Date();
+
       if (id) {
         const t = trades.find(x => x.id === id);
+        if (!t) return;
         document.getElementById('modal-title').textContent = 'Edit Trade';
         document.getElementById('f-pair').value = t.pair;
         document.getElementById('f-side').value = t.side;
         document.getElementById('f-date').value = t.date;
-        document.getElementById('f-time').value = t.time;
-        document.getElementById('f-entry').value = t.entry || '';
-        document.getElementById('f-exit').value = t.exit || '';
+        document.getElementById('f-time').value = t.time || '';
         document.getElementById('f-lot').value = (t.lot || 0.01).toFixed(2);
         document.getElementById('f-pnl').value = t.pnl;
         document.getElementById('f-note').value = t.note || '';
-        if (t.screenshot) {
-          document.getElementById('upload-prev').src = t.screenshot;
-          document.getElementById('upload-prev').style.display = 'block';
-          document.getElementById('upload-ph').style.display = 'none';
-        } else {
-          document.getElementById('upload-prev').style.display = 'none';
-          document.getElementById('upload-ph').style.display = 'block';
-        }
+        currentScreenshots = t.screenshots ? [...t.screenshots] : [];
       } else {
         document.getElementById('modal-title').textContent = 'New Trade';
         document.getElementById('f-pair').value = 'XAUUSD';
         document.getElementById('f-side').value = 'buy';
         document.getElementById('f-date').value = d.toISOString().split('T')[0];
         document.getElementById('f-time').value = d.toTimeString().slice(0, 5);
-        document.getElementById('f-entry').value = '';
-        document.getElementById('f-exit').value = '';
         document.getElementById('f-lot').value = '0.01';
         document.getElementById('f-pnl').value = '';
         document.getElementById('f-note').value = '';
-        document.getElementById('f-screenshot').value = '';
-        document.getElementById('upload-prev').style.display = 'none';
-        document.getElementById('upload-ph').style.display = 'block';
       }
+      renderScreenshotPreviews();
       document.getElementById('modal-overlay').classList.add('active');
     }
+
     function closeModal() {
       document.getElementById('modal-overlay').classList.remove('active');
-      editingId = null; tempScreenshot = null;
+      editingId = null;
+      currentScreenshots = [];
     }
+
     function handleOverlayClick(e) {
       if (e.target === document.getElementById('modal-overlay')) closeModal();
     }
-    function handleScreenshot(e) {
-      const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        tempScreenshot = ev.target.result;
-        document.getElementById('upload-prev').src = tempScreenshot;
-        document.getElementById('upload-prev').style.display = 'block';
-        document.getElementById('upload-ph').style.display = 'none';
-      };
-      reader.readAsDataURL(file);
+
+    // MULTI SCREENSHOT
+    function handleScreenshots(e) {
+      const files = e.target.files;
+      if (!files.length) return;
+
+      let processed = 0;
+      for (let file of files) {
+        if (currentScreenshots.length >= 5) break;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          currentScreenshots.push(ev.target.result);
+          processed++;
+          if (processed === files.length || currentScreenshots.length >= 5) {
+            renderScreenshotPreviews();
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+      e.target.value = '';
     }
 
-    // ═══════════════════════════════════════════
+    function renderScreenshotPreviews() {
+      const grid = document.getElementById('ss-preview-grid');
+      grid.innerHTML = '';
+      currentScreenshots.forEach((src, i) => {
+        const div = document.createElement('div');
+        div.className = 'ss-thumb-wrap';
+        div.innerHTML = `
+          <img src="${src}" alt="screenshot">
+          <button class="ss-remove" onclick="removeScreenshot(${i}); event.stopImmediatePropagation()">×</button>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    function removeScreenshot(index) {
+      currentScreenshots.splice(index, 1);
+      renderScreenshotPreviews();
+    }
+
+    // CLIPBOARD PASTE SUPPORT
+    document.addEventListener('paste', function (e) {
+      if (!document.getElementById('modal-overlay').classList.contains('active')) return;
+
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      for (let item of items) {
+        if (item.type.indexOf('image') !== -1 && currentScreenshots.length < 5) {
+          const blob = item.getAsFile();
+          const reader = new FileReader();
+          reader.onload = ev => {
+            currentScreenshots.push(ev.target.result);
+            renderScreenshotPreviews();
+          };
+          reader.readAsDataURL(blob);
+          break;
+        }
+      }
+    });
+
     // SAVE TRADE
-    // ═══════════════════════════════════════════
     function saveTrade() {
       const pair = (document.getElementById('f-pair').value || '').trim().toUpperCase();
       const pnl = parseFloat(document.getElementById('f-pnl').value);
       if (!pair) { alert('Enter pair/symbol.'); return; }
       if (isNaN(pnl)) { alert('Enter P&L amount.'); return; }
-
-      const existing = editingId ? trades.find(x => x.id === editingId) : null;
-      const screenshot = tempScreenshot || (existing ? existing.screenshot : null);
 
       const trade = {
         id: editingId || Date.now().toString(),
@@ -1639,17 +1765,15 @@
         side: document.getElementById('f-side').value,
         date: document.getElementById('f-date').value,
         time: document.getElementById('f-time').value,
-        entry: parseFloat(document.getElementById('f-entry').value) || 0,
-        exit: parseFloat(document.getElementById('f-exit').value) || 0,
         lot: parseFloat(document.getElementById('f-lot').value) || 0.01,
         pnl,
         note: document.getElementById('f-note').value.trim(),
-        screenshot
+        screenshots: [...currentScreenshots]
       };
 
       if (editingId) {
         const idx = trades.findIndex(x => x.id === editingId);
-        trades[idx] = trade;
+        if (idx > -1) trades[idx] = trade;
         if (activeSidebarId === editingId) openSidebar(trade.id);
       } else {
         trades.push(trade);
@@ -1658,9 +1782,7 @@
       save(); closeModal(); render();
     }
 
-    // ═══════════════════════════════════════════
     // DELETE
-    // ═══════════════════════════════════════════
     function deleteTrade(id) {
       if (!confirm('Delete this trade?')) return;
       trades = trades.filter(x => x.id !== id);
@@ -1668,84 +1790,79 @@
       save(); render();
     }
 
-    // ═══════════════════════════════════════════
     // SIDEBAR
-    // ═══════════════════════════════════════════
     function openSidebar(id) {
       const t = trades.find(x => x.id === id);
       if (!t) return;
       activeSidebarId = id;
 
-      // highlight row
       document.querySelectorAll('.trades-tbl tbody tr').forEach(r => {
         r.classList.toggle('active-row', r.dataset.id === id);
       });
 
-      // running balance for this trade
       const balances = buildBalances();
-      const bal = balances[id];
+      const bal = balances[id] || startBal;
       const pnlCls = t.pnl > 0 ? 'c-green' : t.pnl < 0 ? 'c-red' : '';
       const pnlStr = (t.pnl >= 0 ? '+$' : '-$') + Math.abs(t.pnl).toFixed(2);
-      const balStr = '$' + (bal || startBal).toFixed(2);
 
       document.getElementById('sb-title').textContent = t.pair + ' · ' + (t.side === 'buy' ? 'Buy' : 'Sell');
 
+      let ssHTML = '';
+      if (t.screenshots && t.screenshots.length) {
+        ssHTML = `<div class="sb-ss-grid">`;
+        t.screenshots.forEach(src => {
+          ssHTML += `<div class="sb-ss-item"><img src="${src}" onclick="openLightboxFromSrc('${src}')" alt="chart"></div>`;
+        });
+        ssHTML += `</div>`;
+      } else {
+        ssHTML = `<div class="sb-no-ss"><span style="font-size:32px;opacity:.3;">📸</span><span>No screenshots</span></div>`;
+      }
+
       const body = document.getElementById('sb-body');
       body.innerHTML = `
-    ${t.screenshot
-          ? `<img src="${t.screenshot}" class="sb-screenshot" onclick="openLightbox('${id}')" alt="Chart">`
-          : `<div class="sb-no-ss"><span style="font-size:32px;opacity:.3;">📸</span><span>No screenshot</span></div>`
-        }
-    <div class="detail-grid">
-      <div class="detail-cell full">
-        <div class="dc-label">P &amp; L</div>
-        <div class="pnl-big ${pnlCls}">${pnlStr}</div>
-      </div>
-      <div class="detail-cell">
-        <div class="dc-label">Pair</div>
-        <div class="dc-val" style="color:var(--gold2);">${t.pair}</div>
-      </div>
-      <div class="detail-cell">
-        <div class="dc-label">Direction</div>
-        <div class="dc-val">
-          <span class="side-b ${t.side === 'buy' ? 'side-buy' : 'side-sell'}">${t.side === 'buy' ? '⬆ Buy' : '⬇ Sell'}</span>
+        ${ssHTML}
+        <div class="detail-grid">
+          <div class="detail-cell full">
+            <div class="dc-label">P &amp; L</div>
+            <div class="pnl-big ${pnlCls}">${pnlStr}</div>
+          </div>
+          <div class="detail-cell">
+            <div class="dc-label">Pair</div>
+            <div class="dc-val" style="color:var(--gold2);">${t.pair}</div>
+          </div>
+          <div class="detail-cell">
+            <div class="dc-label">Direction</div>
+            <div class="dc-val">
+              <span class="side-b ${t.side === 'buy' ? 'side-buy' : 'side-sell'}">${t.side === 'buy' ? '⬆ Buy' : '⬇ Sell'}</span>
+            </div>
+          </div>
+          <div class="detail-cell">
+            <div class="dc-label">Date</div>
+            <div class="dc-val mono">${t.date}</div>
+          </div>
+          <div class="detail-cell">
+            <div class="dc-label">Time</div>
+            <div class="dc-val mono">${t.time || '—'}</div>
+          </div>
+          <div class="detail-cell">
+            <div class="dc-label">Lot Size</div>
+            <div class="dc-val mono">${t.lot ? t.lot.toFixed(2) : '—'}</div>
+          </div>
+          <div class="detail-cell">
+            <div class="dc-label">Balance After</div>
+            <div class="dc-val mono" style="color:${bal >= startBal ? 'var(--green)' : 'var(--red)'};">$${bal.toFixed(2)}</div>
+          </div>
         </div>
-      </div>
-      <div class="detail-cell">
-        <div class="dc-label">Date</div>
-        <div class="dc-val mono">${t.date}</div>
-      </div>
-      <div class="detail-cell">
-        <div class="dc-label">Time</div>
-        <div class="dc-val mono">${t.time || '—'}</div>
-      </div>
-      <div class="detail-cell">
-        <div class="dc-label">Entry</div>
-        <div class="dc-val mono">${t.entry ? t.entry.toFixed(2) : '—'}</div>
-      </div>
-      <div class="detail-cell">
-        <div class="dc-label">Exit</div>
-        <div class="dc-val mono">${t.exit ? t.exit.toFixed(2) : '—'}</div>
-      </div>
-      <div class="detail-cell">
-        <div class="dc-label">Lot Size</div>
-        <div class="dc-val mono">${t.lot ? t.lot.toFixed(2) : '—'}</div>
-      </div>
-      <div class="detail-cell">
-        <div class="dc-label">Balance After</div>
-        <div class="dc-val mono" style="color:${(bal || startBal) >= startBal ? 'var(--green)' : 'var(--red)'};">${balStr}</div>
-      </div>
-    </div>
-    <div class="sb-note">
-      <div class="sb-note-label">Notes &amp; Analysis</div>
-      <div class="sb-note-text ${t.note ? '' : 'empty'}">${t.note || 'No notes added.'}</div>
-    </div>
-  `;
+        <div class="sb-note">
+          <div class="sb-note-label">Notes &amp; Analysis</div>
+          <div class="sb-note-text ${t.note ? '' : 'empty'}">${t.note || 'No notes added.'}</div>
+        </div>
+      `;
 
       document.getElementById('sb-actions').innerHTML = `
-    <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="openModal('${id}')">✏️ Edit</button>
-    <button class="btn btn-ghost" style="flex:1;justify-content:center;border-color:var(--red-b);color:var(--red);" onclick="deleteTrade('${id}')">🗑 Delete</button>
-  `;
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="openModal('${id}')">✏️ Edit</button>
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;border-color:var(--red-b);color:var(--red);" onclick="deleteTrade('${id}')">🗑 Delete</button>
+      `;
 
       document.getElementById('sidebar').classList.add('open');
       document.getElementById('app-body').classList.add('sidebar-open');
@@ -1758,14 +1875,65 @@
       document.querySelectorAll('.trades-tbl tbody tr').forEach(r => r.classList.remove('active-row'));
     }
 
-    // ═══════════════════════════════════════════
-    // FILTER
-    // ═══════════════════════════════════════════
+    function openLightboxFromSrc(src) {
+      document.getElementById('lb-img').src = src;
+      document.getElementById('lightbox').classList.add('active');
+    }
+
+    // DEPOSIT / WITHDRAW
+    let dwType = 'deposit';
+
+    function openDWModal() {
+      dwType = 'deposit';
+      document.getElementById('dw-dep-btn').classList.add('active-dep');
+      document.getElementById('dw-with-btn').classList.remove('active-with');
+      document.getElementById('dw-overlay').classList.add('active');
+    }
+
+    function closeDWModal() {
+      document.getElementById('dw-overlay').classList.remove('active');
+    }
+
+    function setDWType(type) {
+      dwType = type;
+      if (type === 'deposit') {
+        document.getElementById('dw-dep-btn').classList.add('active-dep');
+        document.getElementById('dw-with-btn').classList.remove('active-with');
+      } else {
+        document.getElementById('dw-dep-btn').classList.remove('active-dep');
+        document.getElementById('dw-with-btn').classList.add('active-with');
+      }
+    }
+
+    function saveDW() {
+      const amount = parseFloat(document.getElementById('dw-amount').value);
+      if (!amount || isNaN(amount)) {
+        alert('Enter valid amount');
+        return;
+      }
+      const note = document.getElementById('dw-note').value.trim();
+      const date = document.getElementById('dw-date').value;
+
+      capitalEvents.push({
+        id: Date.now().toString(),
+        type: dwType,
+        amount: dwType === 'deposit' ? amount : -amount,
+        date: date,
+        note: note
+      });
+
+      save();
+      closeDWModal();
+      render();
+    }
+
+    // FILTER & RENDER
     function clearDates() {
       document.getElementById('date-from').value = '';
       document.getElementById('date-to').value = '';
       filterTrades();
     }
+
     function filterTrades() { render(); }
 
     function getFiltered() {
@@ -1786,20 +1954,29 @@
       });
     }
 
-    // ═══════════════════════════════════════════
-    // BUILD BALANCES (chronological)
-    // ═══════════════════════════════════════════
     function buildBalances() {
-      const sorted = trades.slice().sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+      let allEvents = [];
+      trades.forEach(t => allEvents.push({ date: t.date, time: t.time || '00:00', pnl: t.pnl, id: t.id, type: 'trade' }));
+      capitalEvents.forEach(c => allEvents.push({ date: c.date, time: '00:00', pnl: c.amount, id: c.id, type: 'capital' }));
+
+      allEvents.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+
       const map = {};
       let b = startBal;
-      sorted.forEach(t => { b += t.pnl; map[t.id] = b; });
+      allEvents.forEach(ev => {
+        b += ev.pnl;
+        if (ev.type === 'trade') map[ev.id] = b;
+      });
       return map;
     }
 
-    // ═══════════════════════════════════════════
-    // RENDER
-    // ═══════════════════════════════════════════
+    function getCurrentBalance() {
+      let bal = startBal;
+      trades.forEach(t => bal += t.pnl);
+      capitalEvents.forEach(c => bal += c.amount);
+      return bal;
+    }
+
     function render() {
       updateStats();
       renderTable();
@@ -1812,7 +1989,7 @@
 
     function updateStats() {
       const totalPnl = trades.reduce((s, t) => s + t.pnl, 0);
-      const balance = startBal + totalPnl;
+      const balance = getCurrentBalance();
       const pct = startBal ? ((totalPnl / startBal) * 100).toFixed(2) : '0.00';
       const wins = trades.filter(t => t.pnl > 0);
       const losses = trades.filter(t => t.pnl < 0);
@@ -1824,7 +2001,7 @@
       document.getElementById('st-start').textContent = startBal.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
       const pnlEl = document.getElementById('st-pnl');
-      pnlEl.textContent = (totalPnl >= 0 ? '+$' : '-$') + Math.abs(totalPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      pnlEl.textContent = fmt$(totalPnl);
       pnlEl.className = 's-val ' + (totalPnl >= 0 ? 'c-green' : 'c-red');
       document.getElementById('st-pnl-pct').textContent = (pct >= 0 ? '+' : '') + pct + '% return';
 
@@ -1840,10 +2017,9 @@
       const best = allPnl.length ? Math.max(...allPnl) : 0;
       const worst = allPnl.length ? Math.min(...allPnl) : 0;
       const bestT = trades.find(t => t.pnl === best);
-      document.getElementById('st-best').textContent = (best >= 0 ? '+$' : '-$') + Math.abs(best).toFixed(2);
+      document.getElementById('st-best').textContent = fmt$(best);
       document.getElementById('st-best-sub').textContent = bestT ? bestT.pair + ' · ' + bestT.date : '—';
 
-      // bars
       const bt = total || 1;
       document.getElementById('wl-wbar').style.width = ((wins.length / bt) * 100) + '%';
       document.getElementById('wl-lbar').style.width = ((losses.length / bt) * 100) + '%';
@@ -1869,74 +2045,67 @@
       const container = document.getElementById('trades-container');
       const balances = buildBalances();
 
-      // update date range label
       const dfrom = document.getElementById('date-from').value;
       const dto = document.getElementById('date-to').value;
-      document.getElementById('curve-label').textContent =
-        (dfrom || dto) ? `${dfrom || 'start'} → ${dto || 'today'}` : 'All time';
+      document.getElementById('curve-label').textContent = (dfrom || dto) ? `${dfrom || 'start'} → ${dto || 'today'}` : 'All time';
 
-      if (!trades.length) {
+      if (!trades.length && !capitalEvents.length) {
         container.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">📋</div>
-      <div class="empty-title">No trades yet</div>
-      <div class="empty-sub">Click "New Trade" to log your first gold trade</div>
-    </div>`; return;
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">No trades yet</div>
+          <div class="empty-sub">Click "New Trade" to get started</div>
+        </div>`;
+        return;
       }
       if (!filtered.length) {
         container.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">🔍</div>
-      <div class="empty-title">No trades match filter</div>
-      <div class="empty-sub">Try different filters or date range</div>
-    </div>`; return;
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title">No trades match filter</div>
+        </div>`;
+        return;
       }
 
-      // reversed for display (newest first)
       const display = [...filtered].reverse();
       let html = `<table class="trades-tbl"><thead><tr>
-    <th>#</th><th>Chart</th><th>Pair</th><th>Side</th>
-    <th>Date</th><th>Time</th><th>Entry</th><th>Exit</th>
-    <th>Lot</th><th>P&amp;L</th><th>Balance</th><th>Note</th>
-    <th style="text-align:center;">Actions</th>
-  </tr></thead><tbody>`;
+        <th>#</th><th>Chart</th><th>Pair</th><th>Side</th>
+        <th>Date</th><th>Time</th><th>Lot</th><th>P&amp;L</th><th>Balance</th><th>Note</th>
+        <th style="text-align:center;">Actions</th>
+      </tr></thead><tbody>`;
 
       display.forEach((t, i) => {
         const pnlCls = t.pnl > 0 ? 'pos' : t.pnl < 0 ? 'neg' : '';
-        const pnlStr = (t.pnl >= 0 ? '+$' : '-$') + Math.abs(t.pnl).toFixed(2);
+        const pnlStr = fmt$(t.pnl);
         const bal = balances[t.id] || startBal;
         const balCls = bal >= startBal ? 'bal-pos' : 'bal-neg';
         const rowNum = filtered.length - i;
         const isActive = activeSidebarId === t.id ? 'active-row' : '';
+        const hasSS = t.screenshots && t.screenshots.length > 0;
+
         html += `<tr class="${isActive}" data-id="${t.id}" onclick="openSidebar('${t.id}')">
-      <td><span class="row-num">${rowNum}</span></td>
-      <td onclick="event.stopPropagation()">
-        ${t.screenshot
-            ? `<img src="${t.screenshot}" class="thumb-img" alt="chart" onclick="openLightbox('${t.id}')">`
-            : `<div class="no-ss">📷</div>`}
-      </td>
-      <td><span class="pair-badge">${t.pair}</span></td>
-      <td><span class="side-b ${t.side === 'buy' ? 'side-buy' : 'side-sell'}">${t.side === 'buy' ? '⬆ Buy' : '⬇ Sell'}</span></td>
-      <td class="mono" style="font-size:12px;">${t.date}</td>
-      <td class="mono" style="font-size:12px;color:var(--text3);">${t.time || '—'}</td>
-      <td class="mono" style="font-size:12px;color:var(--text2);">${t.entry ? t.entry.toFixed(2) : '—'}</td>
-      <td class="mono" style="font-size:12px;color:var(--text2);">${t.exit ? t.exit.toFixed(2) : '—'}</td>
-      <td class="mono" style="font-size:12px;">${t.lot ? t.lot.toFixed(2) : '—'}</td>
-      <td><span class="pv ${pnlCls}">${pnlStr}</span></td>
-      <td><span class="${balCls}">$${bal.toFixed(2)}</span></td>
-      <td><div class="note-cell ${t.note ? '' : 'empty'}" title="${(t.note || '').replace(/"/g, '&quot;')}">${t.note || '—'}</div></td>
-      <td onclick="event.stopPropagation()" style="text-align:center;white-space:nowrap;">
-        <button class="btn-icon edit" onclick="openModal('${t.id}')" title="Edit">✏️</button>
-        <button class="btn-icon danger" onclick="deleteTrade('${t.id}')" title="Delete" style="margin-left:4px;">🗑</button>
-      </td>
-    </tr>`;
+          <td><span class="row-num">${rowNum}</span></td>
+          <td onclick="event.stopPropagation()">
+            ${hasSS ? `<img src="${t.screenshots[0]}" class="thumb-img" onclick="openLightboxFromSrc('${t.screenshots[0]}');event.stopImmediatePropagation()" alt="chart">` : `<div class="no-ss">📷</div>`}
+          </td>
+          <td><span class="pair-badge">${t.pair}</span></td>
+          <td><span class="side-b ${t.side === 'buy' ? 'side-buy' : 'side-sell'}">${t.side === 'buy' ? '⬆ Buy' : '⬇ Sell'}</span></td>
+          <td class="mono" style="font-size:12px;">${t.date}</td>
+          <td class="mono" style="font-size:12px;color:var(--text3);">${t.time || '—'}</td>
+          <td class="mono" style="font-size:12px;">${t.lot ? t.lot.toFixed(2) : '—'}</td>
+          <td><span class="pv ${pnlCls}">${pnlStr}</span></td>
+          <td><span class="${balCls}">$${bal.toFixed(2)}</span></td>
+          <td><div class="note-cell ${t.note ? '' : 'empty'}" title="${(t.note || '').replace(/"/g, '&quot;')}">${t.note || '—'}</div></td>
+          <td onclick="event.stopPropagation()" style="text-align:center;white-space:nowrap;">
+            <button class="btn-icon edit" onclick="openModal('${t.id}');event.stopImmediatePropagation()" title="Edit">✏️</button>
+            <button class="btn-icon danger" onclick="deleteTrade('${t.id}');event.stopImmediatePropagation()" title="Delete" style="margin-left:4px;">🗑</button>
+          </td>
+        </tr>`;
       });
 
       html += `</tbody></table>`;
       container.innerHTML = html;
     }
 
-    // ═══════════════════════════════════════════
-    // DRAW EQUITY CURVE — premium style
-    // ═══════════════════════════════════════════
+    // CHART (unchanged)
     function drawChart() {
       const canvas = document.getElementById('equityCanvas');
       const ctx = canvas.getContext('2d');
@@ -1951,7 +2120,6 @@
       ctx.clearRect(0, 0, W, H);
 
       const filtered = getFiltered();
-
       if (!filtered.length) {
         ctx.fillStyle = 'rgba(255,255,255,0.07)';
         ctx.font = '500 13px DM Sans';
@@ -1961,7 +2129,6 @@
         return;
       }
 
-      // build points
       const pts = [{ b: startBal, label: 'Start' }];
       let b = startBal;
       filtered.forEach(t => { b += t.pnl; pts.push({ b, pnl: t.pnl, date: t.date, pair: t.pair }); });
@@ -1977,21 +2144,19 @@
       const toX = i => pad.l + (i / (pts.length - 1 || 1)) * cw;
       const toY = v => pad.t + (1 - (v - minV) / range) * ch;
 
-      // ── grid
+      // grid
       ctx.strokeStyle = 'rgba(255,255,255,0.04)';
       ctx.lineWidth = 1;
       for (let i = 0; i <= 4; i++) {
         const y = pad.t + (i / 4) * ch;
         ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
       }
-      // vertical grid
       const vLines = Math.min(pts.length - 1, 8);
       for (let i = 1; i < vLines; i++) {
         const x = pad.l + (i / vLines) * cw;
         ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H - pad.b); ctx.stroke();
       }
 
-      // ── smooth curve helper (catmull-rom)
       function catmull(ctx, pts) {
         if (pts.length < 2) return;
         ctx.moveTo(pts[0].x, pts[0].y);
@@ -2015,10 +2180,10 @@
       const fillColor0 = profitable ? 'rgba(45,212,164,0.22)' : 'rgba(240,92,110,0.2)';
       const fillColor1 = profitable ? 'rgba(45,212,164,0.0)' : 'rgba(240,92,110,0.0)';
 
-      // ── fill
       const fillGrad = ctx.createLinearGradient(0, pad.t, 0, H - pad.b);
       fillGrad.addColorStop(0, fillColor0);
       fillGrad.addColorStop(1, fillColor1);
+
       ctx.beginPath();
       catmull(ctx, curvePoints);
       ctx.lineTo(toX(pts.length - 1), H - pad.b);
@@ -2027,7 +2192,6 @@
       ctx.fillStyle = fillGrad;
       ctx.fill();
 
-      // ── glow line (thick, blurred)
       ctx.save();
       ctx.shadowColor = lineColor;
       ctx.shadowBlur = 8;
@@ -2040,17 +2204,14 @@
       ctx.stroke();
       ctx.restore();
 
-      // ── main line
       ctx.beginPath();
       catmull(ctx, curvePoints);
       ctx.strokeStyle = lineColor;
       ctx.lineWidth = 2.5;
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
-      ctx.setLineDash([]);
       ctx.stroke();
 
-      // ── start baseline dashed
       const baseY = toY(startBal);
       if (baseY >= pad.t && baseY <= H - pad.b) {
         ctx.beginPath();
@@ -2063,29 +2224,14 @@
         ctx.setLineDash([]);
       }
 
-      // ── dots
       pts.forEach((p, i) => {
         if (i === 0) return;
         const x = toX(i), y = toY(p.b);
         const dc = p.pnl > 0 ? '#2dd4a4' : p.pnl < 0 ? '#f05c6e' : '#7b849a';
-        // outer glow
-        ctx.beginPath();
-        ctx.arc(x, y, 6, 0, Math.PI * 2);
-        ctx.fillStyle = dc + '33';
-        ctx.fill();
-        // inner dot
-        ctx.beginPath();
-        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = dc;
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fillStyle = dc + '33'; ctx.fill();
+        ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fillStyle = dc; ctx.fill();
       });
 
-      // ── Y axis labels
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = 'rgba(255,255,255,0.25)';
@@ -2096,18 +2242,16 @@
         ctx.fillText('$' + v.toFixed(1), pad.l - 8, y);
       }
 
-      // ── X axis dates
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       ctx.fillStyle = 'rgba(255,255,255,0.2)';
       ctx.font = '500 10px DM Sans';
       const step = Math.ceil(pts.length / 6);
       pts.forEach((p, i) => {
-        if (i === 0 || i % step !== 0 && i !== pts.length - 1) return;
+        if (i === 0 || (i % step !== 0 && i !== pts.length - 1)) return;
         if (p.date) ctx.fillText(p.date.slice(5), toX(i), H - pad.b + 6);
       });
 
-      // ── interactive tooltip
       setupChartHover(canvas, ctx, pts, toX, toY, W, H, pad, dpr, lineColor);
     }
 
@@ -2130,32 +2274,31 @@
         const pnlStr = (p.pnl >= 0 ? '+$' : '-$') + Math.abs(p.pnl).toFixed(2);
         const pnlCol = p.pnl > 0 ? '#2dd4a4' : '#f05c6e';
         tooltip.innerHTML = `
-      <div style="font-size:11px;color:var(--text3);margin-bottom:3px;">${p.date || ''} · ${p.pair || ''}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:${pnlCol};">${pnlStr}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);">$${p.b.toFixed(2)}</div>
-    `;
+          <div style="font-size:11px;color:var(--text3);margin-bottom:3px;">${p.date || ''} · ${p.pair || ''}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:${pnlCol};">${pnlStr}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);">$${p.b.toFixed(2)}</div>
+        `;
       };
       canvas.onmouseleave = () => { tooltip.style.opacity = '0'; };
     }
 
-    // ═══════════════════════════════════════════
-    // LIGHTBOX
-    // ═══════════════════════════════════════════
     function openLightbox(id) {
+      // kept for compatibility
       const t = trades.find(x => x.id === id);
-      if (!t || !t.screenshot) return;
-      document.getElementById('lb-img').src = t.screenshot;
-      document.getElementById('lightbox').classList.add('active');
+      if (t && t.screenshots && t.screenshots.length) {
+        openLightboxFromSrc(t.screenshots[0]);
+      }
     }
+
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('active');
     }
 
-    // esc key
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
         if (document.getElementById('lightbox').classList.contains('active')) closeLightbox();
         else if (document.getElementById('modal-overlay').classList.contains('active')) closeModal();
+        else if (document.getElementById('dw-overlay').classList.contains('active')) closeDWModal();
         else closeSidebar();
       }
     });
